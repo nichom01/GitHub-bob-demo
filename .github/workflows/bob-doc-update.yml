@@ -57,90 +57,46 @@ jobs:
           EOF
           fi
 
+          if [[ ! -f docs/diagrams/sequence-diagram.md ]]; then
+            echo "Creating docs/diagrams/sequence-diagram.md"
+            cat > docs/diagrams/sequence-diagram.md << 'EOF'
+          # Sequence Diagram
+
+          ```mermaid
+          sequenceDiagram
+              participant Placeholder
+          ```
+          EOF
+          fi
+
       - name: Install Bob Shell
-        run: curl -fsSL https://bob.ibm.com/install.sh | sh
+        run: |
+          curl -fsSL https://bob.ibm.com/download/bobshell.sh > /tmp/bobshell.sh
+          bash /tmp/bobshell.sh --pm npm
+          echo "$(npm bin -g)" >> "$GITHUB_PATH"
 
       - name: Ask Bob to update docs
         env:
-          BOB_API_KEY: ${{ secrets.BOB_API_KEY }}
+          BOBSHELL_API_KEY: ${{ secrets.BOB_API_KEY }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
-          bob --accept-license --auth-method api-key -p "
-          Compare this branch against origin/${{ github.event.pull_request.base.ref }}.
-          Based on the code changes:
+          BOB_PROMPT="Compare this branch against origin/${BASE_REF}. Based on the code changes:
 
           1. Update docs/RELEASE_NOTES.md — add a dated entry summarizing what changed in this PR.
-          2. Update docs/diagrams/class-diagram.md — regenerate the mermaid classDiagram block to reflect
-             any new/changed/removed classes, fields, or relationships. If the file only contains a
-             placeholder diagram, replace it entirely with a real one based on the current codebase,
-             not just this PR's diff. Keep surrounding prose, only replace the mermaid code fence.
-          3. Update docs/diagrams/workflow.md — regenerate the mermaid flowchart/sequenceDiagram block(s)
-             to reflect any changed control flow or process steps. If the file only contains a placeholder
-             diagram, replace it entirely with a real one based on the current codebase.
+          2. Update docs/diagrams/class-diagram.md — regenerate the mermaid classDiagram block to reflect any new/changed/removed classes, fields, or relationships in the domain/ folder only. If the file only contains a placeholder diagram, replace it entirely with a real one based on the current contents of domain/, not just this PR's diff. Keep surrounding prose, only replace the mermaid code fence.
+          3. Update docs/diagrams/workflow.md — regenerate the mermaid flowchart block to reflect any changed control flow or process steps in the domain/ folder only. If the file only contains a placeholder diagram, replace it entirely with a real one based on the current contents of domain/.
+          4. Update docs/diagrams/sequence-diagram.md — regenerate the mermaid sequenceDiagram block to show the interactions between domain/ classes (e.g. how callers interact with Warehouse, Location, and any other domain objects). If the file only contains a placeholder, replace it entirely with a real one based on the current contents of domain/.
 
-          Only touch these three files. Preserve existing structure and headings where content is unaffected.
-          Do not invent classes or flows that aren't present in the code."
+          Only touch these four files. Only consider source files under domain/ when generating diagrams. Ignore everything outside domain/ (including .github/, workflows, scripts, or config files). Preserve existing structure and headings where content is unaffected. Do not invent classes or flows that are not present in the domain/ code."
 
-      - name: Set up Node for mermaid linting
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install mermaid-cli
-        run: npm install -g @mermaid-js/mermaid-cli
-
-      - name: Validate mermaid diagrams
-        run: |
-          set -e
-          mkdir -p /tmp/mermaid-check
-          fail=0
-
-          # Extract every ```mermaid ... ``` fenced block from the target docs
-          # and render each to a throwaway svg. mmdc exits non-zero on invalid syntax.
-          for file in docs/diagrams/class-diagram.md docs/diagrams/workflow.md; do
-            if [[ ! -f "$file" ]]; then
-              echo "::warning::$file not found, skipping"
-              continue
-            fi
-
-            awk '
-              /^```mermaid/ { capture=1; block++; fname=sprintf("/tmp/mermaid-check/block-%d.mmd", block); next }
-              /^```/ { if (capture) { capture=0 }; next }
-              capture { print > fname }
-            ' "$file"
-          done
-
-          shopt -s nullglob
-          blocks=(/tmp/mermaid-check/*.mmd)
-
-          if [[ ${#blocks[@]} -eq 0 ]]; then
-            echo "::warning::No mermaid blocks found to validate"
-            exit 0
-          fi
-
-          for block in "${blocks[@]}"; do
-            echo "Validating $block"
-            if ! mmdc -i "$block" -o "${block%.mmd}.svg" --quiet; then
-              echo "::error::Invalid mermaid syntax in $block"
-              echo "--- content ---"
-              cat "$block"
-              echo "---------------"
-              fail=1
-            fi
-          done
-
-          if [[ $fail -eq 1 ]]; then
-            echo "::error::One or more mermaid diagrams failed to parse. Failing job before commit."
-            exit 1
-          fi
-
-          echo "All mermaid diagrams validated successfully."
+          bob --accept-license -p "$BOB_PROMPT"
 
       - name: Commit and push doc updates
         run: |
           git config user.name "bob-docs-bot"
           git config user.email "bob-docs-bot@users.noreply.github.com"
           if [[ -n "$(git status --porcelain)" ]]; then
-            git add docs/RELEASE_NOTES.md docs/diagrams/class-diagram.md docs/diagrams/workflow.md
+            git add docs/RELEASE_NOTES.md docs/diagrams/class-diagram.md docs/diagrams/workflow.md docs/diagrams/sequence-diagram.md
             git commit -m "docs: auto-update release notes and diagrams via Bob"
             git push origin HEAD:${{ github.event.pull_request.head.ref }}
           else

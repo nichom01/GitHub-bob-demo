@@ -9,18 +9,19 @@ import java.util.Map;
  * This is intentionally minimal — it exists as a demo subject for the
  * doc-generation GitHub Action, which regenerates docs/RELEASE_NOTES.md
  * and the mermaid diagrams under docs/diagrams/ whenever this class changes.
+ * 
  */
+
 public class Warehouse {
 
     private final String warehouseId;
-    private final String location;
+    private final Location location;
     private final Map<String, Integer> stockLevels;
-    private int capacity;
+    private String warehouseName;
 
-    public Warehouse(String warehouseId, String location, int capacity) {
+    public Warehouse(String warehouseId, Location location) {
         this.warehouseId = warehouseId;
         this.location = location;
-        this.capacity = capacity;
         this.stockLevels = new HashMap<>();
     }
 
@@ -28,16 +29,16 @@ public class Warehouse {
         return warehouseId;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
     public int getCapacity() {
-        return capacity;
+        return location.getCapacity();
     }
 
     public void setCapacity(int capacity) {
-        this.capacity = capacity;
+        location.setCapacity(capacity);
     }
 
     /**
@@ -48,7 +49,7 @@ public class Warehouse {
             throw new IllegalArgumentException("Quantity must be positive");
         }
         int current = stockLevels.getOrDefault(sku, 0);
-        int updated = Math.min(current + quantity, capacity);
+        int updated = Math.min(current + quantity, location.getCapacity());
         stockLevels.put(sku, updated);
     }
 
@@ -72,6 +73,6 @@ public class Warehouse {
     }
 
     public boolean isAtCapacity() {
-        return getTotalStock() >= capacity;
+        return getTotalStock() >= location.getCapacity();
     }
 }
