@@ -2,15 +2,22 @@
 
 ```mermaid
 classDiagram
+    class Location {
+        -String address
+        +Location(String address)
+        +getAddress() String
+        +toString() String
+    }
+
     class Warehouse {
         -String warehouseId
-        -String location
+        -Location location
         -Map~String, Integer~ stockLevels
         -int capacity
         -String warehouseName
-        +Warehouse(String warehouseId, String location, int capacity)
+        +Warehouse(String warehouseId, Location location, int capacity)
         +getWarehouseId() String
-        +getLocation() String
+        +getLocation() Location
         +getCapacity() int
         +setCapacity(int capacity) void
         +receiveStock(String sku, int quantity) void
@@ -19,4 +26,6 @@ classDiagram
         +getTotalStock() int
         +isAtCapacity() boolean
     }
+
+    Warehouse --> Location : location
 ```
