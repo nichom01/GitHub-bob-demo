@@ -17,13 +17,11 @@ public class Warehouse {
     private final String warehouseId;
     private final Location location;
     private final Map<String, Integer> stockLevels;
-    private int capacity;
     private String warehouseName;
 
-    public Warehouse(String warehouseId, Location location, int capacity) {
+    public Warehouse(String warehouseId, Location location) {
         this.warehouseId = warehouseId;
         this.location = location;
-        this.capacity = capacity;
         this.stockLevels = new HashMap<>();
     }
 
@@ -36,11 +34,11 @@ public class Warehouse {
     }
 
     public int getCapacity() {
-        return capacity;
+        return location.getCapacity();
     }
 
     public void setCapacity(int capacity) {
-        this.capacity = capacity;
+        location.setCapacity(capacity);
     }
 
     /**
@@ -51,7 +49,7 @@ public class Warehouse {
             throw new IllegalArgumentException("Quantity must be positive");
         }
         int current = stockLevels.getOrDefault(sku, 0);
-        int updated = Math.min(current + quantity, capacity);
+        int updated = Math.min(current + quantity, location.getCapacity());
         stockLevels.put(sku, updated);
     }
 
@@ -75,6 +73,6 @@ public class Warehouse {
     }
 
     public boolean isAtCapacity() {
-        return getTotalStock() >= capacity;
+        return getTotalStock() >= location.getCapacity();
     }
 }
