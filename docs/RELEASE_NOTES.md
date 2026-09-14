@@ -1,5 +1,23 @@
 # Release Notes
 
+
+## 2026-09-14 (PR: feat: implement issue #3)
+
+### Add `Store` class — named grouping of `Location`s within a `Warehouse`
+
+**`domain/Store.java`** *(new)*
+- Added `Store` class representing a named grouping of locations within a warehouse.
+- Fields: `storeId` (`private final String`), `warehouse` (`private final Warehouse`), `locations` (`private final List<Location>`), `storeName` (`private String`).
+- Constructor validates that `storeId` is non-blank and `warehouse` is non-null.
+- `addLocation(Location)` appends a location (null guard enforced).
+- `removeLocation(Location)` removes a location and returns a `boolean` indicating whether it was present.
+- `getLocations()` returns an unmodifiable view of the location list.
+- `getTotalCapacity()` sums `getCapacity()` across all locations.
+- `getLocationCount()` returns the number of locations in the store.
+
+---
+
+
 ## 2026-09-14
 
 ### Extract `Location` class; delegate capacity to `Location`; refactor `Warehouse`
