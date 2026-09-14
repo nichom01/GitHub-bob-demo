@@ -3,6 +3,7 @@
 ```mermaid
 sequenceDiagram
     participant Caller
+    participant Store
     participant Warehouse
     participant Location
 
@@ -12,6 +13,29 @@ sequenceDiagram
 
     Caller->>Warehouse: new Warehouse(warehouseId, location)
     Warehouse-->>Caller: warehouse
+
+    Note over Caller: Set up a Store within the Warehouse
+    Caller->>Store: new Store(storeId, warehouse)
+    Store-->>Caller: store
+
+    Caller->>Store: setStoreName(name)
+    Store-->>Caller: (name set)
+
+    Note over Caller: Add locations to the Store
+    Caller->>Store: addLocation(location)
+    Store-->>Caller: (location added)
+
+    Caller->>Store: getTotalCapacity()
+    Store->>Location: getCapacity()
+    Location-->>Store: capacity
+    Store-->>Caller: totalCapacity
+
+    Caller->>Store: getLocationCount()
+    Store-->>Caller: count
+
+    Note over Caller: Remove a location from the Store
+    Caller->>Store: removeLocation(location)
+    Store-->>Caller: boolean
 
     Note over Caller: Receive stock for a SKU
     Caller->>Warehouse: receiveStock(sku, quantity)

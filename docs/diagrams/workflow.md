@@ -13,6 +13,27 @@ flowchart TD
         SC1 -->|valid| SC3[Assign capacity field]
     end
 
+    subgraph storeNew[new Store]
+        SN1[Validate storeId not blank] -->|blank| SN2[throw IllegalArgumentException]
+        SN1 -->|valid| SN3[Validate warehouse not null] -->|null| SN4[throw IllegalArgumentException]
+        SN3 -->|valid| SN5[Assign storeId, warehouse; init locations list]
+    end
+
+    subgraph storeAddLocation[Store.addLocation]
+        SAL1[Validate location not null] -->|null| SAL2[throw IllegalArgumentException]
+        SAL1 -->|valid| SAL3[Append location to locations list]
+    end
+
+    subgraph storeRemoveLocation[Store.removeLocation]
+        SRL1[Remove location from locations list]
+        SRL1 --> SRL2[return boolean indicating presence]
+    end
+
+    subgraph storeTotalCapacity[Store.getTotalCapacity]
+        STC1[Stream locations] --> STC2[Sum location.getCapacity for each]
+        STC2 --> STC3[return total]
+    end
+
     subgraph receiveStock[Warehouse.receiveStock]
         RS1[Validate quantity > 0] -->|invalid| RS2[throw IllegalArgumentException]
         RS1 -->|valid| RS3[Read current stock for SKU]

@@ -29,5 +29,24 @@ classDiagram
         +isAtCapacity() boolean
     }
 
+    class Store {
+        -String storeId
+        -Warehouse warehouse
+        -List~Location~ locations
+        -String storeName
+        +Store(String storeId, Warehouse warehouse)
+        +getStoreId() String
+        +getStoreName() String
+        +setStoreName(String storeName) void
+        +getWarehouse() Warehouse
+        +addLocation(Location location) void
+        +removeLocation(Location location) boolean
+        +getLocations() List~Location~
+        +getTotalCapacity() int
+        +getLocationCount() int
+    }
+
     Warehouse --> Location : location
+    Store --> Warehouse : warehouse
+    Store "1" --> "*" Location : locations
 ```
