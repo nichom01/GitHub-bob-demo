@@ -59,12 +59,13 @@ jobs:
 
       - name: Install Bob Shell
         run: |
-          curl -fsSL https://bob.ibm.com/download/bobshell.sh | bash
+          curl -fsSL https://bob.ibm.com/download/bobshell.sh > /tmp/bobshell.sh
+          yes 1 | bash /tmp/bobshell.sh
           echo "$(npm bin -g)" >> "$GITHUB_PATH"
 
       - name: Ask Bob to update docs
         env:
-          BOB_API_KEY: ${{ secrets.BOB_API_KEY }}
+          BOBSHELL_API_KEY: ${{ secrets.BOB_API_KEY }}
         run: |
           bob --accept-license --auth-method api-key -p "
           Compare this branch against origin/${{ github.event.pull_request.base.ref }}.
