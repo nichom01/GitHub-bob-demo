@@ -4,8 +4,11 @@
 classDiagram
     class Location {
         -String address
-        +Location(String address)
+        -int capacity
+        +Location(String address, int capacity)
         +getAddress() String
+        +getCapacity() int
+        +setCapacity(int capacity) void
         +toString() String
     }
 
@@ -13,9 +16,8 @@ classDiagram
         -String warehouseId
         -Location location
         -Map~String, Integer~ stockLevels
-        -int capacity
         -String warehouseName
-        +Warehouse(String warehouseId, Location location, int capacity)
+        +Warehouse(String warehouseId, Location location)
         +getWarehouseId() String
         +getLocation() Location
         +getCapacity() int
