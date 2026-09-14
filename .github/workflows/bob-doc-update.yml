@@ -59,8 +59,8 @@ jobs:
 
       - name: Install Bob Shell
         run: |
-          curl -fsSL https://bob.ibm.com/install.sh | sh
-          echo "$(npm root -g)/../bin" >> "$GITHUB_PATH"
+          curl -fsSL https://bob.ibm.com/download/bobshell.sh | bash
+          echo "$(npm bin -g)" >> "$GITHUB_PATH"
 
       - name: Ask Bob to update docs
         env:
