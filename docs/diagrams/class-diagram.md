@@ -17,6 +17,6 @@ classDiagram
         +dispatchStock(String sku, int quantity) void
         +getStockLevel(String sku) int
         +getTotalStock() int
-        +isAtCapacity() bool
+        +isAtCapacity() boolean
     }
 ```
