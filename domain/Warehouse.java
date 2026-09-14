@@ -15,12 +15,12 @@ import java.util.Map;
 public class Warehouse {
 
     private final String warehouseId;
-    private final String location;
+    private final Location location;
     private final Map<String, Integer> stockLevels;
     private int capacity;
     private String warehouseName;
-    
-    public Warehouse(String warehouseId, String location, int capacity) {
+
+    public Warehouse(String warehouseId, Location location, int capacity) {
         this.warehouseId = warehouseId;
         this.location = location;
         this.capacity = capacity;
@@ -31,7 +31,7 @@ public class Warehouse {
         return warehouseId;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
