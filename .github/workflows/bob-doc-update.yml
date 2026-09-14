@@ -57,6 +57,18 @@ jobs:
           EOF
           fi
 
+          if [[ ! -f docs/diagrams/sequence-diagram.md ]]; then
+            echo "Creating docs/diagrams/sequence-diagram.md"
+            cat > docs/diagrams/sequence-diagram.md << 'EOF'
+          # Sequence Diagram
+
+          ```mermaid
+          sequenceDiagram
+              participant Placeholder
+          ```
+          EOF
+          fi
+
       - name: Install Bob Shell
         run: |
           curl -fsSL https://bob.ibm.com/download/bobshell.sh > /tmp/bobshell.sh
@@ -77,22 +89,26 @@ jobs:
              If the file only contains a placeholder diagram, replace it entirely with a real one based
              on the current contents of domain/, not just this PR's diff. Keep surrounding prose, only
              replace the mermaid code fence.
-          3. Update docs/diagrams/workflow.md — regenerate the mermaid flowchart/sequenceDiagram block(s)
-             to reflect any changed control flow or process steps in the domain/ folder only. If the file
-             only contains a placeholder diagram, replace it entirely with a real one based on the current
-             contents of domain/.
+          3. Update docs/diagrams/workflow.md — regenerate the mermaid flowchart block to reflect any
+            changed control flow or process steps in the domain/ folder only. If the file only contains
+            a placeholder diagram, replace it entirely with a real one based on the current contents of
+            domain/.
+          4. Update docs/diagrams/sequence-diagram.md — regenerate the mermaid sequenceDiagram block to
+            show the interactions between domain/ classes (e.g. how callers interact with Warehouse,
+            Location, and any other domain objects). If the file only contains a placeholder, replace it
+            entirely with a real one based on the current contents of domain/.
 
-          Only touch these three files. Only consider source files under domain/ when generating diagrams.
-          Ignore everything outside domain/ (including .github/, workflows, scripts, or config files).
-          Preserve existing structure and headings where content is unaffected.
-          Do not invent classes or flows that aren't present in the domain/ code."
+         Only touch these four files. Only consider source files under domain/ when generating diagrams.
+         Ignore everything outside domain/ (including .github/, workflows, scripts, or config files).
+         Preserve existing structure and headings where content is unaffected.
+         Do not invent classes or flows that aren't present in the domain/ code."
 
       - name: Commit and push doc updates
         run: |
           git config user.name "bob-docs-bot"
           git config user.email "bob-docs-bot@users.noreply.github.com"
           if [[ -n "$(git status --porcelain)" ]]; then
-            git add docs/RELEASE_NOTES.md docs/diagrams/class-diagram.md docs/diagrams/workflow.md
+            git add docs/RELEASE_NOTES.md docs/diagrams/class-diagram.md docs/diagrams/workflow.md docs/diagrams/sequence-diagram.md
             git commit -m "docs: auto-update release notes and diagrams via Bob"
             git push origin HEAD:${{ github.event.pull_request.head.ref }}
           else
