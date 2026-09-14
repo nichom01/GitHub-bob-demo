@@ -9,14 +9,17 @@ import java.util.Map;
  * This is intentionally minimal — it exists as a demo subject for the
  * doc-generation GitHub Action, which regenerates docs/RELEASE_NOTES.md
  * and the mermaid diagrams under docs/diagrams/ whenever this class changes.
+ * 
  */
+
 public class Warehouse {
 
     private final String warehouseId;
     private final String location;
     private final Map<String, Integer> stockLevels;
     private int capacity;
-
+    private String warehouseName;
+    
     public Warehouse(String warehouseId, String location, int capacity) {
         this.warehouseId = warehouseId;
         this.location = location;
