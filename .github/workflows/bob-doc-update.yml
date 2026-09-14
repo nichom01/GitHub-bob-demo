@@ -78,30 +78,18 @@ jobs:
       - name: Ask Bob to update docs
         env:
           BOBSHELL_API_KEY: ${{ secrets.BOB_API_KEY }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
-          bob --accept-license -p "
-          Compare this branch against origin/${{ github.event.pull_request.base.ref }}.
-          Based on the code changes:
+          BOB_PROMPT="Compare this branch against origin/${BASE_REF}. Based on the code changes:
 
           1. Update docs/RELEASE_NOTES.md — add a dated entry summarizing what changed in this PR.
-          2. Update docs/diagrams/class-diagram.md — regenerate the mermaid classDiagram block to reflect
-             any new/changed/removed classes, fields, or relationships in the domain/ folder only.
-             If the file only contains a placeholder diagram, replace it entirely with a real one based
-             on the current contents of domain/, not just this PR's diff. Keep surrounding prose, only
-             replace the mermaid code fence.
-          3. Update docs/diagrams/workflow.md — regenerate the mermaid flowchart block to reflect any
-            changed control flow or process steps in the domain/ folder only. If the file only contains
-            a placeholder diagram, replace it entirely with a real one based on the current contents of
-            domain/.
-          4. Update docs/diagrams/sequence-diagram.md — regenerate the mermaid sequenceDiagram block to
-            show the interactions between domain/ classes (e.g. how callers interact with Warehouse,
-            Location, and any other domain objects). If the file only contains a placeholder, replace it
-            entirely with a real one based on the current contents of domain/.
+          2. Update docs/diagrams/class-diagram.md — regenerate the mermaid classDiagram block to reflect any new/changed/removed classes, fields, or relationships in the domain/ folder only. If the file only contains a placeholder diagram, replace it entirely with a real one based on the current contents of domain/, not just this PR's diff. Keep surrounding prose, only replace the mermaid code fence.
+          3. Update docs/diagrams/workflow.md — regenerate the mermaid flowchart block to reflect any changed control flow or process steps in the domain/ folder only. If the file only contains a placeholder diagram, replace it entirely with a real one based on the current contents of domain/.
+          4. Update docs/diagrams/sequence-diagram.md — regenerate the mermaid sequenceDiagram block to show the interactions between domain/ classes (e.g. how callers interact with Warehouse, Location, and any other domain objects). If the file only contains a placeholder, replace it entirely with a real one based on the current contents of domain/.
 
-         Only touch these four files. Only consider source files under domain/ when generating diagrams.
-         Ignore everything outside domain/ (including .github/, workflows, scripts, or config files).
-         Preserve existing structure and headings where content is unaffected.
-         Do not invent classes or flows that aren't present in the domain/ code."
+          Only touch these four files. Only consider source files under domain/ when generating diagrams. Ignore everything outside domain/ (including .github/, workflows, scripts, or config files). Preserve existing structure and headings where content is unaffected. Do not invent classes or flows that are not present in the domain/ code."
+
+          bob --accept-license -p "$BOB_PROMPT"
 
       - name: Commit and push doc updates
         run: |
