@@ -67,7 +67,7 @@ jobs:
         env:
           BOBSHELL_API_KEY: ${{ secrets.BOB_API_KEY }}
         run: |
-          bob --accept-license --auth-method api-key -p "
+          bob --accept-license -p "
           Compare this branch against origin/${{ github.event.pull_request.base.ref }}.
           Based on the code changes:
 
