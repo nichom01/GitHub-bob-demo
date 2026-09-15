@@ -34,6 +34,13 @@ flowchart TD
         STC2 --> STC3[return total]
     end
 
+    subgraph productNew[new Product]
+        PN1[Validate productId not blank] -->|blank| PN2[throw IllegalArgumentException]
+        PN1 -->|valid| PN3[Validate name not blank] -->|blank| PN4[throw IllegalArgumentException]
+        PN3 -->|valid| PN5[Validate sku not blank] -->|blank| PN6[throw IllegalArgumentException]
+        PN5 -->|valid| PN7[Assign productId, name, sku fields]
+    end
+
     subgraph receiveStock[Warehouse.receiveStock]
         RS1[Validate quantity > 0] -->|invalid| RS2[throw IllegalArgumentException]
         RS1 -->|valid| RS3[Read current stock for SKU]

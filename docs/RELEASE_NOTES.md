@@ -1,6 +1,19 @@
 # Release Notes
 
 
+## 2026-09-15
+
+### Add `Product` class — represents a product storable in a warehouse
+
+**`domain/Product.java`** *(new)*
+- Added `Product` domain class representing an item that can be stored in a warehouse.
+- Fields: `productId` (`private final String`), `name` (`private String`), `description` (`private String`), `price` (`private BigDecimal`), `sku` (`private String`).
+- Constructor `Product(String productId, String name, String sku)` validates that `productId`, `name`, and `sku` are non-null and non-blank (throws `IllegalArgumentException`).
+- Getters/setters: `getProductId()`, `getName()`, `setName(String)`, `getDescription()`, `setDescription(String)`, `getPrice()`, `setPrice(BigDecimal)`, `getSku()`, `setSku(String)`.
+
+---
+
+
 ## 2026-09-14 (PR: feat: implement issue #3)
 
 ### Add `Store` class — named grouping of `Location`s within a `Warehouse`

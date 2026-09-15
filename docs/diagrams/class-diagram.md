@@ -46,6 +46,24 @@ classDiagram
         +getLocationCount() int
     }
 
+    class Product {
+        -String productId
+        -String name
+        -String description
+        -BigDecimal price
+        -String sku
+        +Product(String productId, String name, String sku)
+        +getProductId() String
+        +getName() String
+        +setName(String name) void
+        +getDescription() String
+        +setDescription(String description) void
+        +getPrice() BigDecimal
+        +setPrice(BigDecimal price) void
+        +getSku() String
+        +setSku(String sku) void
+    }
+
     Warehouse --> Location : location
     Store --> Warehouse : warehouse
     Store "1" --> "*" Location : locations
