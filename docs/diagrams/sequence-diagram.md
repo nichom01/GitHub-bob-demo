@@ -3,9 +3,20 @@
 ```mermaid
 sequenceDiagram
     participant Caller
+    participant Product
     participant Store
     participant Warehouse
     participant Location
+
+    Note over Caller: Create a Product
+    Caller->>Product: new Product(productId, name, sku)
+    Product-->>Caller: product
+
+    Caller->>Product: setPrice(price)
+    Product-->>Caller: (price set)
+
+    Caller->>Product: setDescription(description)
+    Product-->>Caller: (description set)
 
     Note over Caller: Set up Location and Warehouse
     Caller->>Location: new Location(address, capacity)
